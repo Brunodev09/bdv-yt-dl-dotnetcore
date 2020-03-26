@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using VideoLibrary;
 using System.Threading.Tasks;
 
@@ -6,28 +7,35 @@ namespace BdvYoutubeDotnet
 {
     public class Downloader
     {
-        private string Path;
-        private int id;
-        public Downloader(Config cfg)
+        private static int _id;
+        public static async Task GetVideos(Config cfg)
         {
-            this.Path = cfg.DestinationPath;
+            List<Task> tasks = new List<Task>();
 
             foreach (var link in cfg.Collection)
             {
-                this.Download(link);
+                tasks.Add(Task.Run(() =>
+                {
+                    Downloader.Download(link, cfg.DestinationPath);
+
+                }));
             }
+
+            await Task.WhenAll(tasks.ToArray());
             Console.WriteLine("Done...");
+
         }
 
-        private Task<int> Download(string videoLink)
+        private static Task<int> Download(string videoLink, string path)
         {
             try
             {
-                id++;
-                Console.WriteLine($"[Task-{id}] Downloading video from link " + videoLink);
+                int current = ++_id;
+                Console.WriteLine($"[Task-{current}] Downloading video from link " + videoLink);
                 var Youtube = YouTube.Default;
                 var Video = Youtube.GetVideo(videoLink);
-                Fs.CreateFileBytes(this.Path + Video.FullName, Video.GetBytes());
+                Fs.CreateFileBytes(path + Video.FullName, Video.GetBytes());
+                Console.WriteLine($"[Task-{current}] Download and cache finished for link {videoLink}.");
                 return Task.FromResult(0);
             }
             catch (System.Exception Ex)
