@@ -5,7 +5,7 @@
     <RootNamespace>bdv_yt_dl_dotnet</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3"/>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2"/>
     <PackageReference Include="VideoLibrary" Version="3.0.0"/>
   </ItemGroup>
 </Project>
